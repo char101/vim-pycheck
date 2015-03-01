@@ -7,6 +7,7 @@ sign define pycheck_E text=E! texthl=Error
 sign define pycheck_W text=W! texthl=Search
 
 func s:CheckBuffer()
+	" the user can create custom detection code which sets b:pycheck_version
 	if exists('b:pycheck_version')
 		let python_ver = b:pycheck_version
 	else
@@ -22,7 +23,8 @@ func s:CheckBuffer()
 			endif
 		endif
 	endif
-	echo "Using python version ".python_ver
+	" for checking the used python version
+	let b:pycheck_detected_version = python_ver
 	if python_ver == 3
 		py3 import pycheck; pycheck.check_buffer()
 	else
