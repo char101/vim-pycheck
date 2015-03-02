@@ -26,6 +26,7 @@ class PyFlakesReporter:
         self.has_syntax_error = False
 
     def unexpectedError(self, filename, msg):
+        self.has_syntax_error = True
         self.errors.append((0, 0, 'unexpected error: ' + msg, 'E'))
 
     def syntaxError(self, filename, msg, lineno, offset, text):
@@ -56,19 +57,11 @@ def check_buffer():
     messages.extend(pyflakesrep.errors)
 
     if not pyflakesrep.has_syntax_error:
-        # configure ignored warnings in pep8 user config: http://pep8.readthedocs.org/en/latest/intro.html#configuration
+        # configure pep8 with user settings (http://pep8.readthedocs.org/en/latest/intro.html#configuration)
         style = pep8.StyleGuide(reporter=Pep8Report)
         style.input_file(file)
         messages.extend(style.options.report.errors)
 
-    filtered = []
-    for msg in messages:
-        if 'pep8: E402' in msg.message and vim.current.buffer[msg.line - 2].startswith('sys.path.append'):
-            continue
-        filtered.append(msg)
-    messages = filtered
-
-    # will clear and toggle the error window when errors is empty
     vim.command('call setqflist({}, "r") | cw'.format(json.dumps([dict(bufnr=bufnr, lnum=m.line, col=m.col, text=m.message, type=m.type) for m in messages])))
 
     clear_signs()
