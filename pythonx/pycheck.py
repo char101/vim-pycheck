@@ -1,4 +1,3 @@
-import ast
 import json
 import re
 import vim
@@ -61,6 +60,13 @@ def check_buffer():
         style = pep8.StyleGuide(reporter=Pep8Report)
         style.input_file(file)
         messages.extend(style.options.report.errors)
+
+    filtered = []
+    for msg in messages:
+        if 'pep8: E402' in msg.message and vim.current.buffer[msg.line - 2].startswith('sys.path.append'):
+            continue
+        filtered.append(msg)
+    messages = filtered
 
     # will clear and toggle the error window when errors is empty
     vim.command('call setqflist({}, "r") | cw'.format(json.dumps([dict(bufnr=bufnr, lnum=m.line, col=m.col, text=m.message, type=m.type) for m in messages])))
