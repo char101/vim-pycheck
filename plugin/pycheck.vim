@@ -4,11 +4,11 @@ endif
 let g:loaded_pycheck = 1
 
 sign define pycheck_E text=E! texthl=Error
-sign define pycheck_W text=W! texthl=Search
+sign define pycheck_W text=W! texthl=WarningMsg
 
 func s:CheckBuffer()
 	" create custom detection by writing to b:pycheck_version in ftplugin
-	let python_ver = exists('b:pycheck_version') ? b:pycheck_version : (exists('g:pycheck_default_version') ? g:pycheck_default_version : 2)
+	let python_ver = exists('b:pycheck_version') ? b:pycheck_version : (exists('g:pycheck_default_version') ? g:pycheck_default_version : 3)
 
 	let shebang = getline(1)
 	if python_ver == 2
